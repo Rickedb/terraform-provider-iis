@@ -2,7 +2,6 @@ package agent
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -127,7 +126,7 @@ func (client Client) GetAppPool(name string) (*ApplicationPool, error) {
 	}
 
 	if len(*bytes) == 0 {
-		return nil, errors.New(fmt.Sprintf("application pool '%s' could not be found at the host", name))
+		return nil, fmt.Errorf("application pool '%s' could not be found at the host", name)
 	}
 
 	json.Unmarshal(*bytes, &response)
@@ -194,15 +193,6 @@ func (client Client) updateAppPool(appPool ApplicationPool) error {
 	sb.WriteString(fmt.Sprintf(`%s processModel.shutdownTimeLimit %q;`, setProp, DurationSeconds(appPool.ProcessModel.ShutdownTimeLimit).toTimeString()))
 	_, err := client.Execute(sb.String())
 	return err
-}
-
-func mapToApplicationPoolList(responses []applicationPoolResponse) []ApplicationPool {
-	var appPools []ApplicationPool
-	for _, response := range responses {
-		appPool := mapToApplicationPool(&response)
-		appPools = append(appPools, *appPool)
-	}
-	return nil
 }
 
 func mapToApplicationPool(response *applicationPoolResponse) *ApplicationPool {

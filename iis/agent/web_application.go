@@ -2,7 +2,6 @@ package agent
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -25,7 +24,7 @@ func (client Client) GetWebApplication(site string, name string) (*WebApplicatio
 	}
 
 	if len(*bytes) == 0 {
-		return nil, errors.New(fmt.Sprintf("web application '%s/%s' web site could not be found at the host", site, name))
+		return nil, fmt.Errorf("web application '%s/%s' web site could not be found at the host", site, name)
 	}
 
 	json.Unmarshal(*bytes, &response)
@@ -40,6 +39,7 @@ func (client Client) CreateWebApplication(webApplication WebApplication) (*WebAp
 		$path='%v'
 		if (!(Test-Path $path)){
             New-Item -ItemType Directory -Path $path;
+			icacls $path /grant "IIS_IUSRS:(OI)(CI)F" /T
         }
 		New-WebApplication -Site %q -ApplicationPool %q -Name %q -PhysicalPath $path;
 	`, physicalPath,
@@ -88,6 +88,7 @@ func (client Client) updateWebApplication(webApplication WebApplication) error {
 		$path='%v'
 		if (!(Test-Path $path)){
             New-Item -ItemType Directory -Path $path;
+			icacls $path /grant "IIS_IUSRS:(OI)(CI)F" /T
         }
 	`, physicalPath))
 

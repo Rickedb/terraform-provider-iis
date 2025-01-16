@@ -2,7 +2,6 @@ package agent
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -79,7 +78,7 @@ func (client Client) GetWebSite(name string) (*WebSite, error) {
 	}
 
 	if len(*bytes) == 0 {
-		return nil, errors.New(fmt.Sprintf("web site '%s' could not be found at the host", name))
+		return nil, fmt.Errorf("web site '%s' could not be found at the host", name)
 	}
 
 	json.Unmarshal(*bytes, &response)
@@ -93,6 +92,7 @@ func (client Client) CreateWebSite(webSite WebSite) (*WebSite, error) {
 		$path='%v'
 		if (!(Test-Path $path)){
             New-Item -ItemType Directory -Path $path;
+			icacls $path /grant "IIS_IUSRS:(OI)(CI)F" /T
         }
 		New-Website -Name %q -PhysicalPath $path;
 	`, physicalPath, webSite.Name)
@@ -132,6 +132,7 @@ func (client Client) updateWebSite(webSite WebSite) error {
 		$path='%v'
 		if (!(Test-Path $path)){
             New-Item -ItemType Directory -Path $path;
+			icacls $path /grant "IIS_IUSRS:(OI)(CI)F" /T
         }
 	`, physicalPath))
 

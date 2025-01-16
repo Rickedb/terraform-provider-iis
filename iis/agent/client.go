@@ -40,7 +40,7 @@ func (client Client) Execute(script string) (*[]byte, error) {
 		fmt.Printf("Error: %s\n", err)
 		if stderr.Len() > 0 {
 			fmt.Printf("Stderr: %s\n", stderr.String())
-			err = errors.New(string(stderr.Bytes()))
+			err = errors.New(stderr.String())
 		}
 
 		fmt.Printf("Stdout: %s\n", stdout.String())
@@ -48,7 +48,7 @@ func (client Client) Execute(script string) (*[]byte, error) {
 	}
 
 	if stderr.Len() > 0 {
-		err = errors.New(string(stderr.Bytes()))
+		return nil, errors.New(stderr.String())
 	}
 
 	bytes := stdout.Bytes()
