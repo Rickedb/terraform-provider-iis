@@ -28,8 +28,9 @@ func (client Client) GetWebApplication(site string, name string) (*WebApplicatio
 	}
 
 	json.Unmarshal(*bytes, &response)
-	response.Id = fmt.Sprintf("%s_%s", response.Site, response.Name)
 	response.Site = site
+	response.Name = name
+	response.Id = fmt.Sprintf("%s_%s", response.Site, response.Name)
 	return &response, nil
 }
 
